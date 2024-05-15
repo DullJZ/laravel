@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id()->unique();
             $table->string('email', 255);
             $table->string('code', 4);
-            $table->string('generated_at');
-            $table->string('expired_at');
+            $table->timestamp('generated_at');
+            $table->timestamp('expired_at');
             $table->timestamps();
         });
     }

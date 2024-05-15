@@ -1,6 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+$(document).ready(function(){
+  $("#send-code").click(function(e){
+    e.preventDefault();
+    var email = $("#email").val(); // 获取电子邮件输入框的值
+    $.ajax({
+      url: '/mail/' + email, // 将电子邮件地址作为参数传递
+      type: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response){
+        alert(response);
+        // 处理成功的响应
+      },
+      error: function(error){
+        alert(error.responseJSON.message);
+        // 处理错误的响应
+      }
+    });
+  });
+});
+</script>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

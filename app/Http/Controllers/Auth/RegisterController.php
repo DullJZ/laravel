@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MailController;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
@@ -48,12 +49,22 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone' => ['required', 'string', 'digits:11', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        // 处理URL编码
+        $data = array_map('urldecode', $data);
+        // 检查验证码
+        if (isset($data['code']) && isset($data['email'])) {
+            $mailController = new MailController();
+            if ($mailController->check($data['email'], $data['code'])) {
+                return Validator::make($data, [
+                    'name' => ['required', 'string', 'max:255'],
+                    'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                    'phone' => ['required', 'string', 'digits:11', 'unique:users'],
+                    'code' => ['required', 'string', 'digits:4'],
+                    'password' => ['required', 'string', 'min:8', 'confirmed'],
+                ]);
+            }
+            return false;
+        };
     }
 
     /**

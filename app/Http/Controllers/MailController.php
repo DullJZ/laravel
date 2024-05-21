@@ -31,7 +31,7 @@ class MailController extends Controller
         // 生成验证码
         $this->createCode($to);
         // 发送邮件
-        $mailable = new Email(EmailCode::where('email', $to)->first());
+        $mailable = new Email(EmailCode::where('email', $to)->where('expired_at', '>', now())->first());
         Mail::to($to)->send($mailable);
         return '验证码已发送';
     }
